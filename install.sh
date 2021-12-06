@@ -32,7 +32,7 @@ nscache 65536
 flush
 auth strong
 
-users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+users "ab:CL:cd"
 
 $(awk -F "/" '{print "auth strong\n" \
 "allow " $1 "\n" \
