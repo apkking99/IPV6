@@ -28,6 +28,8 @@ install_3proxy() {
 gen_3proxy() {
     cat <<EOF
 daemon
+setgid 65535
+setuid 65535
 nscache 65536
 flush
 auth strong
