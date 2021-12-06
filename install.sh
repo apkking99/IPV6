@@ -47,7 +47,7 @@ EOF
 
 gen_proxy_file_for_user() {
     cat >proxy.txt <<EOF
-$(awk -F "/" '{print $3 ":" $4 ":ab:cd"}' ${WORKDATA})
+$(awk -F "/" '{print "http;" $3 ":" $4 ";ab;cd"}' ${WORKDATA})
 EOF
 }
 
