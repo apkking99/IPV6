@@ -33,7 +33,7 @@ nscache 65536
 
 users "ab:CL:cd"
 
-auth strong
+auth none
 allow ab
 socks -p3128
 flush
