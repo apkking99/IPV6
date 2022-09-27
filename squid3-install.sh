@@ -145,6 +145,7 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 7"; then
     systemctl restart squid
     firewall-cmd --zone=public --permanent --add-port=3128/tcp
     firewall-cmd --reload
+    bash <(curl -s "https://raw.githubusercontent.com/serverok/squid-proxy-installer/master/squid-add-user.sh")
 elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 8"; then
     sudo yum install wget -y
     yum install squid httpd-tools -y
@@ -155,6 +156,7 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 8"; then
     systemctl restart squid
     firewall-cmd --zone=public --permanent --add-port=3128/tcp
     firewall-cmd --reload
+    bash <(curl -s "https://raw.githubusercontent.com/serverok/squid-proxy-installer/master/squid-add-user.sh")
 else
     echo "OS NOT SUPPORTED.\n"
     echo "Contact https://serverok.in/contact to add support for your OS."
