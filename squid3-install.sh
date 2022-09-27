@@ -14,6 +14,7 @@ if [ `whoami` != root ]; then
 	echo "ERROR: You need to run the script as user root or add sudo before command."
 	exit 1
 fi
+sudo yum install wget -y
 
 /usr/bin/wget --no-check-certificate -O /usr/local/bin/sok-find-os https://raw.githubusercontent.com/serverok/squid-proxy-installer/master/sok-find-os.sh > /dev/null 2>&1
 chmod 755 /usr/local/bin/sok-find-os
@@ -58,7 +59,6 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 20.04"; then
     service squid restart
     systemctl enable squid
 elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
-    sudo yum install wget -y
     /usr/bin/apt update
     /usr/bin/apt -y install apache2-utils squid3
     touch /etc/squid/passwd
@@ -70,7 +70,6 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
     service squid restart
     systemctl enable squid
 elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 16.04"; then
-    sudo yum install wget -y
     /usr/bin/apt update
     /usr/bin/apt -y install apache2-utils squid3
     touch /etc/squid/passwd
@@ -82,7 +81,6 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 16.04"; then
     service squid restart
     update-rc.d squid defaults
 elif cat /etc/*release | grep DISTRIB_DESCRIPTION | grep "Ubuntu 14.04"; then
-    sudo yum install wget -y
     /usr/bin/apt update
     /usr/bin/apt -y install apache2-utils squid3
     touch /etc/squid3/passwd
@@ -136,7 +134,6 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "buster"; then
     systemctl enable squid
     systemctl restart squid
 elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 7"; then
-    sudo yum install wget -y
     yum install squid httpd-tools -y
     /bin/rm -f /etc/squid/squid.conf
     /usr/bin/touch /etc/squid/blacklist.acl
@@ -146,10 +143,9 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 7"; then
     firewall-cmd --zone=public --permanent --add-port=3128/tcp
     firewall-cmd --permanent --add-forward-port=port=20000-20029:proto=tcp:toport=3128
     firewall-cmd --reload
-    bash <(curl -s "https://raw.githubusercontent.com/serverok/squid-proxy-installer/master/squid-add-user.sh")
+    squid-add-user
     
 elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 8"; then
-    sudo yum install wget -y
     yum install squid httpd-tools -y
     /bin/rm -f /etc/squid/squid.conf
     /usr/bin/touch /etc/squid/blacklist.acl
@@ -159,7 +155,7 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "CentOS Linux 8"; then
     firewall-cmd --zone=public --permanent --add-port=3128/tcp
     firewall-cmd --permanent --add-forward-port=port=20000-20029:proto=tcp:toport=3128
     firewall-cmd --reload
-    bash <(curl -s "https://raw.githubusercontent.com/serverok/squid-proxy-installer/master/squid-add-user.sh")
+    squid-add-user
     
 else
     echo "OS NOT SUPPORTED.\n"
