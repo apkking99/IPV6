@@ -65,36 +65,25 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
     /bin/rm -f /etc/squid/squid.conf
     /usr/bin/touch /etc/squid/blacklist.acl
     /usr/bin/wget --no-check-certificate -O /etc/squid/squid.conf https://raw.githubusercontent.com/apkking99/IPV6/main/squid.conf
-/sbin/iptables -I INPUT -p tcp --dport 40001 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40002 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40003 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40004 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40005 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40006 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40007 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40008 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40009 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40010 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40011 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40012 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40013 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40014 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40015 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40016 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40017 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40018 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40019 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40020 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40021 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40022 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40023 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40024 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40025 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40026 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40027 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40028 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40029 -j ACCEPT
-/sbin/iptables -I INPUT -p tcp --dport 40030 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40001 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40002 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40003 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40004 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40005 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40006 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40007 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40008 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40009 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40010 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40011 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40012 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40013 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40014 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40015 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40016 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40017 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40018 -j ACCEPT
+    /sbin/iptables -I INPUT -p tcp --dport 40019 -j ACCEPT
     /sbin/iptables-save
     service squid restart
     systemctl enable squid
