@@ -67,6 +67,21 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
     /usr/bin/wget --no-check-certificate -O /etc/squid/squid.conf https://raw.githubusercontent.com/apkking99/IPV6/main/squid.conf
     /sbin/iptables -I INPUT -p tcp --dport 40000 -j ACCEPT
     /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40001 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40001 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40002 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40003 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40004 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40005 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40006 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40007 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40008 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40009 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40010 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40011 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40012 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40013 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40014 -j REDIRECT --to-ports 40000
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40015 -j REDIRECT --to-ports 40000
     /sbin/iptables-save
     service squid restart
     systemctl enable squid
