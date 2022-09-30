@@ -66,7 +66,7 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
     /usr/bin/touch /etc/squid/blacklist.acl
     /usr/bin/wget --no-check-certificate -O /etc/squid/squid.conf https://raw.githubusercontent.com/apkking99/IPV6/main/squid.conf
     /sbin/iptables -I INPUT -p tcp --dport 40000 -j ACCEPT
-    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40000 -j REDIRECT --to-ports 40001
+    /sbin/iptables -t nat -I PREROUTING -p tcp --dport 40001 -j REDIRECT --to-ports 40000
     /sbin/iptables-save
     service squid restart
     systemctl enable squid
