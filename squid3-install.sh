@@ -88,6 +88,9 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
     /sbin/iptables-save
     service squid restart
     systemctl enable squid
+    cat /proc/sys/net/ipv4/ip_forward
+    sysctl -w net.ipv4.ip_forward=1
+    iptables -P FORWARD ACCEPT
 elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 16.04"; then
     /usr/bin/apt update
     /usr/bin/apt -y install apache2-utils squid3
