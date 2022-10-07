@@ -59,6 +59,9 @@ elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 20.04"; then
     service squid restart
     systemctl enable squid
 elif cat /etc/os-release | grep PRETTY_NAME | grep "Ubuntu 18.04"; then
+    sudo add-apt-repository ppa:mysteriumnetwork/node
+    sudo apt-get update
+    sudo apt install myst
     /usr/bin/apt update
     /usr/bin/apt -y install apache2-utils squid3
     touch /etc/squid/passwd
