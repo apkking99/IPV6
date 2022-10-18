@@ -31,3 +31,4 @@ sudo apt install iptables-persistent -y
 apt update
 apt install unattended-upgrades apt-listchanges -y
 /etc/init.d/3proxyinit start
+reboot
