@@ -1,6 +1,8 @@
 sudo add-apt-repository ppa:mysteriumnetwork/node -y;
 sudo apt-get update -y;
 sudo apt install myst -y;
+apt update;
+apt install unattended-upgrades apt-listchanges -y;
 apt-get update && apt-get -y upgrade
 apt-get install -y build-essential nano
 wget --no-check-certificate https://github.com/z3APA3A/3proxy/archive/0.8.12.tar.gz
