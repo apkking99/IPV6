@@ -26,6 +26,46 @@ update-rc.d 3proxyinit defaults
 /sbin/iptables -I INPUT -p tcp --dport 50007 -j ACCEPT
 /sbin/iptables -I INPUT -p tcp --dport 50008 -j ACCEPT
 /sbin/iptables -I INPUT -p tcp --dport 50009 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50010 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50011 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50012 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50013 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50014 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50015 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50016 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50017 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50018 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50019 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50020 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50021 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50022 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50023 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50024 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50025 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50026 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50027 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50028 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50029 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50030 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50031 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50032 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50033 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50034 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50035 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50036 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50037 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50038 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50039 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50040 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50041 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50042 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50043 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50044 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50045 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50046 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50047 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50048 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 50049 -j ACCEPT
 /sbin/iptables-save
 sudo apt install iptables-persistent -y
 apt update
