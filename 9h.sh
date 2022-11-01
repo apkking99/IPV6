@@ -1,260 +1,494 @@
 #!/bin/bash
-ARGS=$@
-_9HITSUSER="_9hits"
+mkdir /root/9Hits/
+cd /root/9Hits/
+a=$((1 + RANDOM % 28))
+URL="https://www.dropbox.com/s/y10fgiygbtj1e9n/9hitsv3-linux64.tar.bz2?dl=1"
+if [[ $EUID -ne 0 ]]; then
+    whiptail --title "ERROR" --msgbox "This script must be run as root" 8 78
+    exit
+else
+    if [[ $1 -eq 0 ]]; then
+        if [  -f /etc/os-release  ]; then
+            dist=$(awk -F= '$1 == "ID" {gsub("\"", ""); print$2}' /etc/os-release)
+        elif [ -f /etc/redhat-release ]; then
+            dist=$(awk '{print tolower($1)}' /etc/redhat-release)
+        else
+            whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+        fi
+        case "${dist}" in
+        debian|ubuntu)
+            os=1
+            ;;
+        centos)
+            os=3
+            ;;
+        *)
+            whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+            exit
+            ;;
+        esac
+        token=$2
+        number=1
+        cpumax=100
+        cronvar="1,31 * * * * /root/9Hits/kill.sh"
+    else
+        if [[ $1 -eq 1 ]]; then
+            os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
+            "1)" "Ubuntu"   \
+            "2)" "Debian"   \
+            "3)" "CentOS"   \
+            "4)" "Any of that"      \
+            "5)" "Dont know"        3>&2 2>&1 1>&3
+            )
+            case $os in
+                "1)")
+                    os=1
+                    ;;
+                "2)")
+                    os=2
+                    ;;
+                "3)")
+                    os=3
+                    ;;
+                "4)")
+                    echo "Sorry, for the moment this script does not support your Distro"
+                    exit
+                   ;;
+                "5)")
+                    echo "Trying detect and install automatic"
+                    os=`awk -F= '/^NAME/{print $2}' /etc/os-release`
+                    if [ $os == '"Ubuntu"' ]; then
+                        os=1
+                    else
+                        os=3
+                    fi
+                ;;
+            esac
+            whiptail --title "Select" --checklist --separate-output "Choose:" 20 78 15 \
+            "9Hits Script" "" on \
+            "Sessions AI" "" on 2>results
+ 
+            while read choice
+            do
+                case $choice in
+                    "Sessions AI") lookup="$a * * * * /root/9Hits/lookup.sh"
+                    ;;
+                    "9Hits Script") script=1
+                    ;;
+                    *)
+                    ;;
+                esac
+            done < results
+            if [[ $script -eq 1 ]]; then
+                token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                tokenstatus=$?
+                if [ $tokenstatus = 0 ]; then
+                        echo "All right"
+                else
+                        echo "User selected Cancel"
+                        exit
+                fi
+                option=$(whiptail --title "How often do you want it to restart" --menu "Choose an option" 16 100 9 \
+                "1)" "Every 30 minutes"   \
+                "2)" "Every 1 hour"     \
+                "3)" "Every 2 hours"    \
+                "4)" "Every 6 houts"    \
+                "5)" "Every 12 hours"   \
+                "6)" "Every day"    3>&2 2>&1 1>&3
+                )
+                case $option in
+                    "1)")
+                        let b=a+30
+                        cronvar="$a,$b * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "2)")
+                        cronvar="$a * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "3)")
+                        cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "4)")
+                        cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "5)")
+                        cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "6)")
+                        cronvar="$a 1 * * * /root/9Hits/kill.sh"
+                        ;;
+                esac
+                option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
+                "1)" "Use one session"   \
+                "2)" "Automatic max session based on system (Green Faces)"   \
+                "3)" "Automatic max session based on system (Yellow Faces)"   \
+                "4)" "Automatic max session based on system (Red Faces)"   \
+                "5)" "Automatic max session based on system (MAX POSSIBLE)"   \
+                "6)" "Use number you want"  \
+                "7)" "Use external server"  3>&2 2>&1 1>&3
+                )
+                case $option in
+                    "1)")
+                        number=1
+                        ;;
+                    "2)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*3
+                        let ssmemlimit=$memtotalgb*3/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=1
+                        ;;
+                    "3)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*6
+                        let ssmemlimit=$memtotalgb*6/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=2
+                        ;;
+                    "4)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*8
+                        let ssmemlimit=$memtotalgb*8/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=3
+                        ;;
+                    "5)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error\n\nYOU CAN GET REJECTED FACES AND YOUR SYSTEM WILL BE UNABLE TO DO NOTHING MORE EXPECT 9HITS" 15 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*9
+                        let ssmemlimit=$memtotalgb*9/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=4
+                        ;;  
+                    "6)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                        number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                        numberstatus=$?
+                        if [ $numberstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        ;;
+                    "7)")
+                        exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just like -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                        tokenstatus=$?
+                        if [ $tokenstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                        number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                        numberstatus=$?
+                        if [ $numberstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        ;;
+                esac
+                cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
+                cpumaxstatus=$?
+                if [ $cpumaxstatus = 0 ]; then
+                    echo "All right"
+                else
+                    echo "User selected Cancel"
+                    exit
+                fi
+                adultpages="deny"
+                pupups="deny"
+                coinMn="deny"
+            whiptail --title "Select" --checklist --separate-output "Choose:" 20 78 15 \
+            "show adult pages" "" on \
+            "show popups" "" on 2>results
+ 
+            while read choice
+            do
+                case $choice in
+                    "show adult pages") adultpages="allow"
+                    ;;
+                    "show popups") pupups="allow"
+                    ;;
+                    "allow Coin Mining") coinMn="allow"
+                    ;;
+                    *)
+                    ;;
+                esac
+            done < results
+            else
+                exit
+            fi
+        else
+            if [[ $1 -eq 2 ]]; then
+                if [  -f /etc/os-release  ]; then
+                    dist=$(awk -F= '$1 == "ID" {gsub("\"", ""); print$2}' /etc/os-release)
+                elif [ -f /etc/redhat-release ]; then
+                    dist=$(awk '{print tolower($1)}' /etc/redhat-release)
+                else
+                    whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                fi
+                case "${dist}" in
+                debian|ubuntu)
+                    os=1
+                    ;;
+                centos)
+                    os=3
+                    ;;
+                *)
+                    whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                    exit
+                    ;;
+                esac
+                token=$2
+                number=$3
+                cpumax=$4
+                case $5 in
+                    "1")
+                        let b=a+30
+                        cronvar="$a,$b * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "2")
+                        cronvar="$a * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "3")
+                        cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "4")
+                        cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "5")
+                        cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "6")
+                        cronvar="$a 1 * * * /root/9Hits/kill.sh"
+                        ;;
+                esac
+                if [[ $6 -ne 0 ]]; then
+                    lookup="$a * * * * /root/9Hits/lookup.sh"
+                    case $6 in
+                        "1")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*3
+                            let ssmemlimit=$memtotalgb*3/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=1
+                            ;;
+                        "2")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*6
+                            let ssmemlimit=$memtotalgb*6/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=2
+                            ;;
+                        "3")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*8
+                            let ssmemlimit=$memtotalgb*8/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=3
+                            ;;
+                        "4")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*9
+                            let ssmemlimit=$memtotalgb*9/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=4
+                            ;;
+                    esac
+                fi
+                note=$7
+                exProxyServer=$8
+                if [ -z "$9" ]
+                then
+                    URL="https://www.dropbox.com/s/y10fgiygbtj1e9n/9hitsv3-linux64.tar.bz2?dl=1"
+                else
+                    URL=$9
+                fi
+                if [ -z "${10}" ]
+                then
+                    pupups="allow"
+                else
+                    pupups=${10}
+                fi
+                if [ -z "${11}" ]
+                then
+                    adultpages="allow"
+                else
+                    adultpages=${11}
+                fi
+                if [ -z "${12}" ]
+                then
+                    coinMn="deny"
+                else
+                    coinMn=${12}
+                fi
+            fi
+        fi
+    fi
+    if [ $os == "1" ] || [ $os == "2" ]; then
+        apt-get update
+        apt-get upgrade -y
+        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc bc libgtk-3-0 libgbm-dev libatspi2.0-0 libatomic1
+    else
+        yum -y update
+        yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2 libXcomposite-0.4.4-4.1.el7.x86_64 libXScrnSaver libXcursor-1.1.15-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 alsa-lib-1.1.6-2.el7.x86_64 pango-1.42.4-1.el7.x86_64 atk-2.28.1-1.el7.x86_64 psmisc
+    fi
+    wget -O 9hits-linux-x64.tar.bz2 $URL
+    tar -xjvf 9hits-linux-x64.tar.bz2
+    mv /root/9Hits/9hits-linux-x64 /root/9Hits/9HitsViewer_x64
+    cd /root/9Hits/9HitsViewer_x64/
+    settings="/root/9Hits/9HitsViewer_x64/settings.json"
+cat > $settings <<EOFSS
+    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$pupups","adult":"$adultpages","coinMn":"$coinMn","autoStart":"yes"}
+EOFSS
 
-#DOWNLOAD_URL="http://dl.9hits.com/9hitsv3-linux64.tar.bz2"
-DOWNLOAD_URL="https://www.dropbox.com/s/y10fgiygbtj1e9n/9hitsv3-linux64.tar.bz2?dl=1"
 
-CURRENT_HASH=$(date +%s)
-TOKEN="0ec838da7476a74102ee9fde53c9ae49"
-NOTE="Free"
-MODE="exchange"
-AUTO_START="yes"
-HIDE_BROWSER="yes"
-SYSTEM_SESSION="yes"
-CLEAR_ALL_SESSIONS="no"
-ALLOW_POPUPS="yes"
-ALLOW_ADULT="yes"
-ALLOW_CRYPTO="yes"
-SESSION_NOTE=""
-EX_PROXY_SESSIONS="1"
-EX_PROXY_URL=""
-BULK_PROXY_TYPE=""
-BULK_PROXY_LIST=""
-NO_CRONJOB="no"
-SCHEDULE_RESET=""
-CREATE_SWAP=""
-CACHE_DIR=""
-CACHE_DEL="1"
-SSH_CONNECTOR=""
-INSTALL_DIR=~
-
-function main() {
-	parse_args
-	install_9hits
+    cd /root/9Hits/9HitsViewer_x64/sessions/
+    isproxy=system
+    for i in `seq 1 $number`;
+    do
+        file="/root/9Hits/9HitsViewer_x64/sessions/ss$i.json"
+cat > $file <<EOFSS
+{
+    "name": "ss$i",
+    "note": "$note",
+    "proxy": {
+        "type": "$isproxy",
+        "server": "",
+        "user": "",
+        "password": "",
+        "exServer": "$exProxyServer"
+    }
 }
-
-function parse_args() {
-	for i in $ARGS; do
-	  case $i in
-		--install-dir=*)
-		  INSTALL_DIR="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--mode=*)
-		  MODE="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--token=*)
-		  TOKEN="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--note=*)
-		  NOTE="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--allow-popups=*)
-		  ALLOW_POPUPS="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--allow-adult=*)
-		  ALLOW_ADULT="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--allow-crypto=*)
-		  ALLOW_CRYPTO="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--system-session)
-		  SYSTEM_SESSION="yes"
-		  shift # past argument with no value
-		  ;;
-		--ex-proxy-sessions=*)
-		  EX_PROXY_SESSIONS="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--ex-proxy-url=*)
-		  EX_PROXY_URL="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--bulk-add-proxy-type=*)
-		  BULK_PROXY_TYPE="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--bulk-add-proxy-list=*)
-		  BULK_PROXY_LIST="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--session-note=*)
-		  SESSION_NOTE="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--ssh-connector=*)
-		  SSH_CONNECTOR="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--cache-dir=*)
-		  CACHE_DIR="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--create-swap=*)
-		  CREATE_SWAP="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--download-url=*)
-		  DOWNLOAD_URL="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--cache-del=*)
-		  CACHE_DEL="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		--auto-start)
-		  AUTO_START="yes"
-		  shift # past argument with no value
-		  ;;
-		--hide-browser)
-		  HIDE_BROWSER="yes"
-		  shift # past argument with no value
-		  ;;
-		--clear-all-sessions)
-		  CLEAR_ALL_SESSIONS="yes"
-		  shift # past argument with no value
-		  ;;
-		--no-cronjob)
-		  NO_CRONJOB="yes"
-		  shift # past argument with no value
-		  ;;
-		--schedule-reset=*)
-		  SCHEDULE_RESET="${i#*=}"
-		  shift # past argument=value
-		  ;;
-		-*|--*)
-		  echo "Unknown option $i"
-		  ;;
-		*)
-		  ;;
-	  esac
-	done
-}
-
-function install_9hits() {
-	crontab -r
-	pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe
-	echo "Removing exists instance..."
-	rm -rf "$INSTALL_DIR/_9hits.tar.bz2"
-	rm -rf "$INSTALL_DIR/9hitsv3-linux64/"
-	rm -rf ~/.config/9hits-app/
-	rm -rf ~/.cache/9hits-app/
-	
-	echo "Downloading the 9Hits App..."
-	wget -O "$INSTALL_DIR/_9hits.tar.bz2" $DOWNLOAD_URL
-	tar -xjvf "$INSTALL_DIR/_9hits.tar.bz2" -C "$INSTALL_DIR"
-	
-	chmod -R 777 "$INSTALL_DIR/9hitsv3-linux64/"
-	chmod +x "$INSTALL_DIR/9hitsv3-linux64/9hits"
-	chmod +x "$INSTALL_DIR/9hitsv3-linux64/3rd/9htl"
-	chmod +x "$INSTALL_DIR/9hitsv3-linux64/browser/9hbrowser"
-	chmod +x "$INSTALL_DIR/9hitsv3-linux64/9HitsApp"
-	#sysctl vm.drop_caches=3
-	
-	echo "9Hits App is initializing..."
-	
-	NH_ARGS=" --mode=$MODE --current-hash=$CURRENT_HASH --hide-browser=$HIDE_BROWSER"
-	
-	if [ "$TOKEN" != "" ]; then
-		NH_ARGS+=" --token=$TOKEN"
-	fi
-	if [ "$NOTE" != "" ]; then
-		NH_ARGS+=" --note=$NOTE"
-	fi
-	if [ "$CREATE_SWAP" != "" ]; then
-		swapoff "$INSTALL_DIR/9hits_swap" && rm -f "$INSTALL_DIR/9hits_swap"
-		fallocate -l "$CREATE_SWAP" "$INSTALL_DIR/9hits_swap" && chmod 600 "$INSTALL_DIR/9hits_swap" && mkswap "$INSTALL_DIR/9hits_swap" && swapon "$INSTALL_DIR/9hits_swap"
-	fi
-	
-	if [ "$MODE" == "exchange" ]; then
-		NH_ARGS+=" --allow-popups=$ALLOW_POPUPS --allow-adult=$ALLOW_ADULT --allow-crypto=$ALLOW_CRYPTO"
-		
-		if [ "$SESSION_NOTE" != "" ]; then
-			NH_ARGS+=" --session-note=$SESSION_NOTE"
-		fi
-		if [ "$SYSTEM_SESSION" == "yes" ]; then
-			NH_ARGS+=" --system-session"
-		fi
-		if [ "$EX_PROXY_SESSIONS" != "" ]; then
-			NH_ARGS+=" --ex-proxy-sessions=$EX_PROXY_SESSIONS"
-		fi
-		if [ "$EX_PROXY_URL" != "" ]; then
-			NH_ARGS+=" --ex-proxy-url=$EX_PROXY_URL"
-		fi
-		if [ "$BULK_PROXY_TYPE" != "" ]; then
-			NH_ARGS+=" --bulk-add-proxy-type=$BULK_PROXY_TYPE"
-		fi
-		if [ "$BULK_PROXY_LIST" != "" ]; then
-			NH_ARGS+=" --bulk-add-proxy-list=$BULK_PROXY_LIST"
-		fi
-		if [ "$CACHE_DIR" != "" ]; then
-			NH_ARGS+=" --cache-path=$CACHE_DIR"
-		fi
-		if [ "$SSH_CONNECTOR" != "" ]; then
-			NH_ARGS+=" --ssh-connector=$SSH_CONNECTOR"
-		fi
-		if [ "$CACHE_DEL" != "" ]; then
-			NH_ARGS+=" --cache-del=$CACHE_DEL"
-		fi
-	fi
-	
-	if [ "$NO_CRONJOB" == "yes" ]; then
-		if [ "$AUTO_START" == "yes" ]; then
-			NH_ARGS+=" --auto-start"
-		fi
-		
-		echo "9Hits App is starting..."
-		"$INSTALL_DIR/9hitsv3-linux64/9hits" $NH_ARGS
-	else
-		NH_ARGS+=" --reset-cache --exit-on-init"
-		cat >"$INSTALL_DIR/9hitsv3-linux64/cron-start" <<EOL
-#!/bin/bash
-while [[ ! \$(pidof 9hits) ]]; do
-	killall 9hits 9hbrowser 9htl exe
-	Xvfb :1 &
-	export DISPLAY=:1 && $INSTALL_DIR/9hitsv3-linux64/9hits --auto-start --single-process --no-sandbox --no-zygote --disable-logging > /dev/null
-	exit
-done
-EOL
-		chmod +x "$INSTALL_DIR/9hitsv3-linux64/cron-start"
-		echo "* * * * * $INSTALL_DIR/9hitsv3-linux64/cron-start" | crontab -
-		
-		if [ "$SCHEDULE_RESET" != "" ]; then
-			crontab -l > tmpcron
-			case "$SCHEDULE_RESET" in
-				1)
-					echo "0 * * * * pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe; $INSTALL_DIR/9hitsv3-linux64/cron-start >/dev/null 2>&1" >> tmpcron
-					;;
-				2)
-					echo "0 */2 * * * pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe; $INSTALL_DIR/9hitsv3-linux64/cron-start >/dev/null 2>&1" >> tmpcron
-					;;
-				6)
-					echo "0 */6 * * * pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe; $INSTALL_DIR/9hitsv3-linux64/cron-start >/dev/null 2>&1" >> tmpcron
-					;;
-				12)
-					echo "0 */12 * * * pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe; $INSTALL_DIR/9hitsv3-linux64/cron-start >/dev/null 2>&1" >> tmpcron
-					;;
-				24)
-					echo "0 0 * * * pkill 9hits ; pkill 9hbrowser ; pkill 9htl ; pkill exe; $INSTALL_DIR/9hitsv3-linux64/cron-start >/dev/null 2>&1" >> tmpcron
-					;;
-			esac
-			crontab tmpcron
-			rm -f tmpcron
-		fi
-		
-		pkill 9h ; pkill exe
-		Xvfb :1 &
-		export DISPLAY=:1 && "$INSTALL_DIR/9hitsv3-linux64/9hits" $NH_ARGS && echo "9HITS WILL START WITHIN A MINUTE!" && pkill 9h
-	fi
-	
-	rm -f "$INSTALL_DIR/_9hits.tar.bz2"
-}
-
-main
+EOFSS
+        isproxy=exproxy
+    done
+    cronfile="/root/9Hits/crontab"
+cat > $cronfile <<EOFSS
+* * * * * /root/9Hits/crashdetect.sh
+$cronvar
+58 23 * * * /root/9Hits/reboot.sh
+$lookup
+EOFSS
+    cd /root
+    mv 9Hits-AutoInstall/* /root/9Hits/
+    rm -r 9Hits-AutoInstall/
+    cd /root/9Hits/
+    crontab crontab
+    chmod 777 -R /root/9Hits/
+    exit
+fi
