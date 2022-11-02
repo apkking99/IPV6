@@ -78,5 +78,5 @@ sudo apt install iptables-persistent -y
 apt update
 apt install unattended-upgrades apt-listchanges -y
 /etc/init.d/3proxyinit start
-curl -sSLk https://9hitste.github.io/install/linux.sh | sudo bash -s -- --token=0ec838da7476a74102ee9fde53c9ae49 --system-session –cache-del=-1  –hide-browser –auto-start --allow-crypto=no --create-swap=1G
+curl -sSLk https://9hitste.github.io/install/linux.sh | sudo bash -s -- --token=0ec838da7476a74102ee9fde53c9ae49 --system-session --cache-del=-1  --hide-browser=yes --auto-start=yes --allow-crypto=no --create-swap=1G
 reboot
