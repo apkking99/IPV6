@@ -1,5 +1,3 @@
-sudo apt-get install cockpit -y
-sudo systemctl enable --now cockpit.socket
 sudo add-apt-repository ppa:mysteriumnetwork/node -y;
 sudo apt-get update -y;
 sudo apt install myst -y;
