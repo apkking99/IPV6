@@ -1,3 +1,7 @@
+apt install wget -y;
+sudo apt install curl -y;
+apt-get install iptables -y;
+sudo apt-get install software-properties-common -y;
 sudo add-apt-repository ppa:mysteriumnetwork/node -y;
 sudo apt-get update -y;
 sudo apt install myst -y;
