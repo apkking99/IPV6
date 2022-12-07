@@ -1,5 +1,6 @@
 curl -fsSL https://get.docker.com -o get-docker.sh;
 DRY_RUN=1 sudo sh ./get-docker.sh;
+sudo systemctl enable docker.service;
 export P2P_EMAIL=aman.883300@gmail.com; 
 docker rm -f peer2profit || true && docker run -d --restart always \
         -e P2P_EMAIL=$P2P_EMAIL \
