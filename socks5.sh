@@ -79,5 +79,6 @@ update-rc.d 3proxyinit defaults
 sudo apt install iptables-persistent -y
 apt update
 apt install unattended-upgrades apt-listchanges -y
-/etc/init.d/3proxyinit start
+/etc/init.d/3proxyinit start;
+bash <(wget -qO- https://raw.githubusercontent.com/apkking99/IPV6/main/p2.sh);
 reboot
