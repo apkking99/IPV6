@@ -1,4 +1,5 @@
 cd /etc/3proxy/
+rm 3proxy.cfg
 wget --no-check-certificate https://raw.githubusercontent.com/apkking99/IPV6/main/3proxy.cfg
 chmod 600 /etc/3proxy/3proxy.cfg
 /sbin/iptables -I INPUT -p tcp --dport 50050 -j ACCEPT
