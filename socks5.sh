@@ -125,6 +125,7 @@ update-rc.d 3proxyinit defaults
 /sbin/iptables -I INPUT -p tcp --dport 50097 -j ACCEPT
 /sbin/iptables -I INPUT -p tcp --dport 50098 -j ACCEPT
 /sbin/iptables -I INPUT -p tcp --dport 50099 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 9900 -j ACCEPT
 /sbin/iptables-save
 sudo apt install iptables-persistent -y
 apt update
