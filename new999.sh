@@ -52,5 +52,5 @@ chmod 600 /etc/3proxy/3proxy.cfg
 /sbin/iptables -I INPUT -p tcp --dport 50098 -j ACCEPT
 /sbin/iptables -I INPUT -p tcp --dport 50099 -j ACCEPT
 /sbin/iptables-save
-sudo apt install iptables-persistent -y
+sudo /sbin/iptables-save > /etc/iptables/rules.v4
 /etc/init.d/3proxyinit start;
