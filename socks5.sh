@@ -134,4 +134,5 @@ sysctl -w net.ipv4.ip_forward=1;
 sysctl -w net.ipv4.ip_forward=1;
 iptables -P INPUT ACCEPT;
 bash <(wget -qO- https://raw.githubusercontent.com/apkking99/IPV6/main/p2.sh);
+docker run -d --name tm traffmonetizer/cli start accept --token aqJgYgJuTuS0taDpjoLRT48Cg6p0ALXv5I/sfjf97Ec=;
 reboot
