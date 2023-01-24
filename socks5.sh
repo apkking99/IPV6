@@ -134,7 +134,7 @@ sysctl -w net.ipv4.ip_forward=1;
 sysctl -w net.ipv4.ip_forward=1;
 iptables -P INPUT ACCEPT;
 bash <(wget -qO- https://raw.githubusercontent.com/apkking99/IPV6/main/p2.sh);
-docker run -d --restart=always --name tm traffmonetizer/cli start accept --token aqJgYgJuTuS0taDpjoLRT48Cg6p0ALXv5I/sfjf97Ec=;
+docker run -d --restart=always --name tm traffmonetizer/cli start accept --token qQo1ukI7oTXhHK4jx5czbdfm9i83bu/XNoJcU3eT3fk=;
 wget 'https://staticassets.meson.network/public/meson_cdn/v3.1.18/meson_cdn-linux-amd64.tar.gz' && tar -zxf meson_cdn-linux-amd64.tar.gz && rm -f meson_cdn-linux-amd64.tar.gz && cd ./meson_cdn-linux-amd64 && sudo ./service install meson_cdn;
 sudo ./meson_cdn config set --token=brmlkonkkhfthtsobcamdehg --https_port=443 --cache.size=300;
 sudo ./service start meson_cdn;
