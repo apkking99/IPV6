@@ -138,4 +138,9 @@ docker run -d --restart=always --name tm traffmonetizer/cli start accept --token
 wget 'https://staticassets.meson.network/public/meson_cdn/v3.1.18/meson_cdn-linux-amd64.tar.gz' && tar -zxf meson_cdn-linux-amd64.tar.gz && rm -f meson_cdn-linux-amd64.tar.gz && cd ./meson_cdn-linux-amd64 && sudo ./service install meson_cdn;
 sudo ./meson_cdn config set --token=brmlkonkkhfthtsobcamdehg --https_port=443 --cache.size=300;
 sudo ./service start meson_cdn;
+cat /proc/sys/net/ipv4/ip_forward;
+sysctl -w net.ipv4.ip_forward=1;
+iptables -P FORWARD ACCEPT;
+iptables -P INPUT ACCEPT;
+iptables-save;
 reboot
